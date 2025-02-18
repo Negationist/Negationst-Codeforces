@@ -1,0 +1,20 @@
+struct Point{
+    int x,y;
+    Point(){
+        x = 0; y = 0;
+    }
+    Point(int _x, int _y){
+        x = _x;
+        y = _y;
+    }
+    Point operator-(const Point &other){
+        return Point(this->x-other.x,this->y-other.y);
+    }
+    Point operator+(const Point &other){
+        return Point(this->x+other.x,this->y+other.y);
+    }
+};
+
+int cross(Point a, Point b){
+    return a.x*b.y-b.x*a.y;
+}
