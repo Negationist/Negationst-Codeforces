@@ -1,0 +1,8 @@
+int nCr(int n, int r){
+    if(n<r) return 0;
+    int res = fact[n]*factInv[n-r];
+    res%=mod;
+    res = res*factInv[r];
+    res%=mod;
+    return res;
+}
