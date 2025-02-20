@@ -1,8 +1,7 @@
-int normalize(int x){
+void normalize(int &x){
     if(x){
         x/=abs(x);
     }
-    return x;
 }
 
 struct Point{
@@ -14,20 +13,20 @@ struct Point{
         x = _x;
         y = _y;
     }
-    Point operator-(const Point &other){
+    Point operator-(const Point &other) const {
         return Point(this->x-other.x,this->y-other.y);
     }
-    Point operator+(const Point &other){
+    Point operator+(const Point &other) const {
         return Point(this->x+other.x,this->y+other.y);
     }
     friend istream &operator>>(istream &in, Point &p) {
 		in >> p.x >> p.y;
 		return in;
 	}
-	static int cross(Point a, Point b){
-        return a.x*b.y-b.x*a.y;
+	int operator^(const Point &other) const{
+        return (x*other.y)-(other.x*y);
     }
-    static int shoelace(vector<Point> &a){ //returns double the area
+    static int shoelace(const vector<Point> &a){ //returns double the area
         int n = a.size();
         int sum = 0;
         for(int i=0;i+1<n;i++){
@@ -49,7 +48,7 @@ struct lineSeg{
         in >> seg.x1 >> seg.y1 >> seg.x2 >> seg.y2;
         return in;
     }
-    static bool colinear(lineSeg &a, lineSeg &b){ //assumes they intersect
+    static bool parallel(lineSeg &a, lineSeg &b){ //assumes they intersect
         int res1 = (a.y2-a.y1)*(b.x2-b.x1);
         int res2 = (b.y2-b.y1)*(a.x2-a.x1);
         return (res1==res2);
@@ -58,10 +57,11 @@ struct lineSeg{
         Point line = Point(x2,y2)-Point(x1,y1);
         Point z = a-Point(x1,y1);
         bool res = line^z;
-        return (res==0);
+        bool contain = ((min(x1,x2)<=a.x)&&(max(x1,x2)>=a.x));
+        return (res==0 && contain);
     }
-    ld length(){
-        ld res = sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+    long double length(){
+        long double res = sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
         return res;
     }
 };
@@ -82,14 +82,44 @@ bool intersect(lineSeg a, lineSeg b){
     Point d1(b.x1,b.y1);
     Point d2(b.x2,b.y2);
     int cross1 = (d2-d1)^(c2-d1);
-    cross1 = normalize(cross1);
+    normalize(cross1);
     int cross2 = (d2-d1)^(c1-d1);
-    cross2 = normalize(cross2);
+    normalize(cross2);
     int cross3 = (c2-c1)^(d1-c1);
-    cross3 = normalize(cross3);
+    normalize(cross3);
     int cross4 = (c2-c1)^(d2-c1);
-    cross4 = normalize(cross4);
+    normalize(cross4);
     if(cross1*cross2<=0 && cross3*cross4<=0){
+        return true;
+    } else{
+        return false;
+    }
+}
+
+bool strict_intersect(lineSeg a, lineSeg b){
+    int t1 = max(a.y1,a.y2);
+    int b1 = min(a.y1,a.y2);
+    int t2 = max(b.y1,b.y2);
+    int b2 = min(b.y1,b.y2);
+    if(max(b1,b2)>min(t1,t2)) return false;
+    int r1 = max(a.x1,a.x2);
+    int l1 = min(a.x1,a.x2);
+    int r2 = max(b.x1,b.x2);
+    int l2 = min(b.x1,b.x2);
+    if(max(l1,l2)>min(r1,r2)) return false;
+    Point c1(a.x1,a.y1);
+    Point c2(a.x2,a.y2);
+    Point d1(b.x1,b.y1);
+    Point d2(b.x2,b.y2);
+    int cross1 = (d2-d1)^(c2-d1);
+    normalize(cross1);
+    int cross2 = (d2-d1)^(c1-d1);
+    normalize(cross2);
+    int cross3 = (c2-c1)^(d1-c1);
+    normalize(cross3);
+    int cross4 = (c2-c1)^(d2-c1);
+    normalize(cross4);
+    if(cross1*cross2<0 && cross3*cross4<0){
         return true;
     } else{
         return false;
