@@ -33,6 +33,12 @@ struct Point {
         ld dx = a.x-b.x, dy = a.y-b.y;
         return (dx*dx + dy*dy);
     }
+    friend bool ccw(const Point &a, const Point &b, const Point &c){
+       Point seg1 = b-a;
+       Point seg2 = c-a;
+       int res = seg1^seg2;
+       return (res>0);
+    }
     void debug() const {
         std::cout << "this point is (" << x << ", " << y << ")\n";
     }
