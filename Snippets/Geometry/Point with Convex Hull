@@ -1,4 +1,13 @@
 template<typename T>
+T sign(T x){
+    if(x<0){
+        return -1;
+    } else if(x>0){
+        return 1;
+    } else return 0;
+}
+
+template<typename T>
 struct Point {
     T x, y;
     Point() : x(0), y(0) {}
@@ -110,6 +119,34 @@ struct Point {
             res[j] = p[cand.top()];
             cand.pop();
             --j;
+        }
+        return res;
+    }
+    friend vector<pair<Point,Point>> all_antipodal(vector<Point> &hull){ //pass this a convex hull
+        int n = hull.size();
+        vector<pair<Point,Point>> res;
+        auto next = [&](int x){
+            return (x+1<n?x+1:x+1-n);
+        };
+        auto prev = [&](int x){
+            return (x-1>=0?x-1:x-1+n);
+        };
+        int p1 = 0, p2 = 0;
+        vector<bool> visited(n,false);
+        for(;p1<n;p1++){
+            Point base = hull[next(p1)] - hull[p1];
+            while(p1==p2 || p2==next(p1) || sign(base^(hull[p2]-hull[prev(p2)]))==sign(base^(hull[next(p2)]-hull[p2]))){
+                p2 = next(p2);
+            }
+            if(visited[p1]) continue;
+            visited[p1] = true;
+            res.pb({hull[p1],hull[p2]});
+            res.pb({hull[next(p1)],hull[p2]});
+            if((base^(hull[next(p2)]-hull[p2]))==0){
+                visited[p2] = true;
+                res.pb({hull[p1],hull[next(p2)]});
+                res.pb({hull[next(p1)],hull[next(p2)]});
+            }
         }
         return res;
     }
