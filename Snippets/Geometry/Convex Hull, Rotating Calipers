@@ -54,13 +54,11 @@ struct Point {
     void debug() const {
         std::cout << "this point is (" << x << ", " << y << ")\n";
     }
-    friend vector<Point> hull_2d(vector<Point> &p){
+    friend vi hull_ind(vector<Point> &p){
         int _n = p.size();
-        int pivot = -1;
-        for(int i=0;i<_n;i++){
-            if(pivot==-1){
-                pivot = i;
-            } else if(p[i].y<p[pivot].y){
+        int pivot = 0;
+        for(int i=1;i<_n;i++){
+            if(p[i].y<p[pivot].y){
                 pivot = i;
             } else if(p[pivot].y==p[i].y){
                 if(p[i].x<p[pivot].x){
@@ -113,10 +111,10 @@ struct Point {
             }
         }
         int num = cand.size();
-        vector<Point> res(num);
+        vi res(num);
         int j = num-1;
         while(cand.size()){
-            res[j] = p[cand.top()];
+            res[j] = (cand.top());
             cand.pop();
             --j;
         }
