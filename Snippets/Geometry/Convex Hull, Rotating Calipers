@@ -60,7 +60,7 @@ struct Point {
         for(int i=0;i<_n;i++){
             if(pivot==-1){
                 pivot = i;
-            } else if(p[pivot].y<p[i].y){
+            } else if(p[i].y<p[pivot].y){
                 pivot = i;
             } else if(p[pivot].y==p[i].y){
                 if(p[i].x<p[pivot].x){
