@@ -1,60 +1,64 @@
+enum QueryType {};
+
 struct Info{
     Info(){
 
     };
-    void set(int a){
 
+    friend Info operator+(const Info &a, const Info &b) {
+        return Info();
     }
 };
 
-Info merge(Info &l, Info &r){
-    Info res{};
+struct Tag{
+    
+};
 
-    return res;
-}
-
-template <typename Info, typename F>
-struct Segtree {
+template <typename Info, typename Tag>
+struct segTree {
     int n;
     vector<Info> tree;
-    Segtree(int n) : n(n) {
+    segTree(int n){
+        this->n = n;
         tree.assign(4 << __lg(n), Info());
     }
-    void build(vector<F> &a, int x, int l, int r) {
+    segTree(const vector<Info> &a){
+        n = a.size();
+        tree.assign(4 << __lg(n), Info());
+        build(1,0,n-1,a);
+    }
+    void build(int x, int l, int r, vector<Info> &a) {
+        if(l==r){
+            tree[x] = a[l];
+        } else{
+            int m = (l + r) / 2;
+            build(2 * x, l, m, a);
+            build(2 * x + 1, m + 1, r, a);
+            tree[x] = tree[2*x] + tree[2 * x + 1];
+        }
+    }
+    void update(int x, int l, int r, int i, Tag v) {
         if (l == r) {
-            if (l < (int)a.size()){
-                tree[x].set(a[l]);
-            }
+            tree[x].apply(v);
             return;
         }
         int m = (l + r) / 2;
-        build(a, 2 * x, l, m);
-        build(a, 2 * x + 1, m + 1, r);
-        tree[x] = merge(tree[2 * x], tree[2 * x + 1]);
-    }
-    void build(vector<F> &a) {
-        build(a, 1, 0, n - 1);
-    }
-    void set(int x, int l, int r, int i, F v) {
-        if (l == r) {
-            tree[x].set(v);
-            return;
+        if (i <= m){
+           update(2 * x, l, m, i, v);
         }
-        int m = (l + r) / 2;
-        if (i <= m)
-            set(2 * x, l, m, i, v);
-        else
-            set(2 * x + 1, m + 1, r, i, v);
-        tree[x] = merge(tree[2 * x], tree[2 * x + 1]);
+        else{
+            update(2 * x + 1, m + 1, r, i, v);
+        }
+        tree[x] = tree[2*x] + tree[2 * x + 1];
     }
-    void set(int i, F v) {
-        set(1, 0, n - 1, i, v);
+    void update(int i, Tag v) {
+        update(1, 0, n - 1, i, v);
     }
     Info query(int x, int l, int r, int ql, int qr) {
-        if (qr < l || ql > r) return;
+        if (qr < l || ql > r) return Info();
         if (ql <= l && r <= qr) return tree[x];
         int m = (l + r) / 2;
-        return merge(query(2 * x, l, m, ql, qr), query(2 * x + 1, m + 1, r, ql, qr));
+        return query(2 * x, l, m, ql, qr) + query(2 * x + 1, m + 1, r, ql, qr);
     }
     Info query(int l, int r) {
         return query(1, 0, n - 1, l, r);
