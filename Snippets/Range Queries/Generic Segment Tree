@@ -1,17 +1,20 @@
 enum QueryType {};
 
+struct Tag{
+
+};
+
 struct Info{
     Info(){
 
     };
+    void apply(const Tag &t){
+
+    }
 
     friend Info operator+(const Info &a, const Info &b) {
         return Info();
     }
-};
-
-struct Tag{
-    
 };
 
 template <typename Info, typename Tag>
