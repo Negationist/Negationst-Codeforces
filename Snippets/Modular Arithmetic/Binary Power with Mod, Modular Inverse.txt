@@ -1,5 +1,5 @@
-int binPowMod(int b, int p, int mod){
-    int res = 1;
+ll binPowMod(ll b, ll p, ll mod){
+    ll res = 1;
     b%=mod;
     while(p>0){
         if(p&1){
@@ -12,6 +12,6 @@ int binPowMod(int b, int p, int mod){
     return res;
 }
 
-int modInv(int x, int mod){
+ll modInv(ll x, ll mod){
     return binPowMod(x,mod-2,mod);
 }

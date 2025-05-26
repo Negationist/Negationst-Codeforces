@@ -49,6 +49,7 @@ struct Segtree {
     }
 
     T query(int l, int r) {
+        if(l>r) return identity;
         return query(1, 0, n - 1, l, r);
     }
 };
